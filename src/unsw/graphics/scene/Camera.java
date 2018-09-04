@@ -2,15 +2,15 @@ package unsw.graphics.scene;
 
 import com.jogamp.opengl.GL3;
 
+import unsw.graphics.CoordFrame2D;
 import unsw.graphics.Matrix3;
+import unsw.graphics.Shader;
 import unsw.graphics.Vector3;
 import unsw.graphics.geometry.Point2D;
 
 /**
  * The camera is a SceneObject that can be moved, rotated and scaled like any other, as well as
  * attached to any parent in the scene tree.
- * 
- * TODO: You need to implement the setView() method.
  *
  * @author malcolmr
  * @author Robert Clifton-Everest
@@ -27,12 +27,15 @@ public class Camera extends SceneObject {
     }
 
     public void setView(GL3 gl) {
-        // TODO compute a view transform to account for the cameras aspect ratio
+        CoordFrame2D viewFrame = CoordFrame2D.identity().scale(1/myAspectRatio, 1);
         
-        // TODO apply further transformations to account for the camera's global position, 
         // rotation and scale
+        viewFrame = viewFrame
+                .scale(1/getGlobalScale(), 1/getGlobalScale())
+                .rotate(-getGlobalRotation())
+                .translate(-getGlobalPosition().getX(), -getGlobalPosition().getY());
         
-        // TODO set the view matrix to the computed transform
+        Shader.setViewMatrix(gl, viewFrame.getMatrix());
     }
 
     public void reshape(int width, int height) {
