@@ -1,2 +1,5 @@
 /bin
-/res/models/big
+
+\.idea/
+
+UNSWgraph\.iml
