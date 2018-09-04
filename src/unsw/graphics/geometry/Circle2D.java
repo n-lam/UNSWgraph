@@ -1,56 +1,31 @@
-/**
- * 
- */
 package unsw.graphics.geometry;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
-
 import unsw.graphics.CoordFrame2D;
 import unsw.graphics.Point2DBuffer;
 import unsw.graphics.Shader;
 
-/**
- * A convex polygon in 2D space.
- * 
- * This class is immutable.
- * 
- * @author Robert Clifton-Everest
- *
- */
-public class Polygon2D {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Circle2D extends Polygon2D {
+    private static final int VERTICES = 64;
     private List<Point2D> points;
 
-    public Polygon2D(List<Point2D> points) {
-        this.points = new ArrayList<Point2D>(points);
-    }
-    
-    /**
-     * Construct a polygon with the given values representing the vertices.
-     * 
-     * Argument 2*i and 2*i+1 form vertex i on the polygon. e.g.
-     * 
-     * <code>new LineStrip2D(0,0, 1,0, 1,1, -1,1);</code>
-     * 
-     * creates a polygon with vertices (0,0), (1,0), (1,1), (-1,1).
-     * 
-     * @param values
-     */
-    public Polygon2D(float... values) {
-        if (values.length % 2 != 0)
-            throw new IllegalArgumentException("Odd number of arguments");
-        List<Point2D> points = new ArrayList<Point2D>();
-        for (int i = 0; i < values.length / 2; i++) {
-            points.add(new Point2D(values[2*i], values[2*i + 1]));
+    public Circle2D(float radius) {
+        points = new ArrayList<>();
+        for (int i = 0; i < VERTICES; i++) {
+            float angle = (float) (i * Math.PI * 2 / VERTICES);
+            float x = radius * (float) Math.cos(angle);
+            float y = radius * (float) Math.sin(angle);
+            Point2D p = new Point2D(x, y);
+            points.add(p);
         }
-        this.points = points;
     }
 
     /**
-     * Draw the polygon in the given coordinate frame.
+     * Draw the circle in the given coordinate frame.
      * @param gl
      */
     public void draw(GL3 gl, CoordFrame2D frame) {
@@ -68,7 +43,8 @@ public class Polygon2D {
 
         gl.glDeleteBuffers(1, names, 0);
     }
-    
+
+    @Override
     public void drawOutline(GL3 gl, CoordFrame2D frame) {
         // It should draw an outline of a polygon using GL_LINE_LOOP
         Point2DBuffer buffer = new Point2DBuffer(points);
@@ -85,13 +61,4 @@ public class Polygon2D {
 
         gl.glDeleteBuffers(1, names, 0);
     }
-    
-    /**
-     * Draw the polygon on the canvas.
-     * @param gl
-     */
-    public void draw(GL3 gl) {
-        draw(gl, CoordFrame2D.identity());
-    }
-
 }
